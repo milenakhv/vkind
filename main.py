@@ -3,13 +3,12 @@ from n_token import token_group
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
 from f import*
-
 import requests
+from database import*
 
 
 
-session = vk_api.VkApi(token=token_group)
-longpoll = VkLongPoll(session)
+
 
 
 def write_msg(user_id, message):
@@ -22,21 +21,22 @@ for event in longpoll.listen():
         user_id = event.user_id
         if bot == "status":
             if msg.isdigit():
-                write_msg(event.user_id, "Семейное положение записано")
+                write_msg(event.user_id, f"Семейное положение записано{msg}")
             else:
                 write_msg(event.user_id, "Укажи семейное положение цифрами, например: 1, если не женат/не замужем")
-            bot="start"
+            bot == "start"
             continue
         if bot=="age":
             if msg.isdigit():
-                write_msg(event.user_id, "Год рождения записан")
+                write_msg(event.user_id, f"Год рождения {msg}записан")
             else:
                 write_msg(event.user_id, "Укажи год рождения цифрами")
+
             bot="start"
             continue
         if bot=="city":
             if msg:
-                write_msg(event.user_id, "Город записан")
+                write_msg(event.user_id, f"Город{msg}записан")
             bot="start"
             continue
         if bot=="start":
@@ -46,28 +46,20 @@ for event in longpoll.listen():
                 write_msg(user_id,"Отлично! Начнем поиск!")
                 informathion = user_info()
                 print(informathion)
-                for i in informathion["response"]:
-                    if i["relation"] == 0:
-                        write_msg(user_id, "Введите свое семейное положение цифрой от 1 до 8, где: 1 — не женат/не замужем;"
-                                       "2 — есть друг/есть подруга; 3 — помолвлен/помолвлена; 4 — женат/замужем;"
-                                       "5 — всё сложно; 6 — в активном поиске; 7 — влюблён/влюблена;"
-                                       "8 — в гражданском браке")
-                        bot = "status"
-                        print(msg)
-                    elif "bdate" not in i.keys():
-                        write_msg(user_id, "Укажите год рождения, например 2000")
-                        bot = "age"
-                        print(msg)
-                    elif "city" not in i.keys():
-                        write_msg(user_id, "Введите ваш город")
-                        bot = "city"
-                        print(msg)
-
-
-
-                    #data_y = data_year(informathion)
+                if informathion["relation"] == 0:
+                    write_msg(user_id, "Введите свое семейное положение цифрой от 1 до 8, где: 1 — не женат/не замужем;"
+                                    "2 — есть друг/есть подруга; 3 — помолвлен/помолвлена; 4 — женат/замужем;"
+                                     "5 — всё сложно; 6 — в активном поиске; 7 — влюблён/влюблена;"
+                                     "8 — в гражданском браке")
+                    bot = "status"
+                if "bdate" not in informathion.keys():
+                    write_msg(user_id, "Укажите год рождения, например 2000")
+                    bot = "age"
+                if "city" not in informathion.keys():
+                    write_msg(user_id, "Введите ваш город")
+                    bot = "city"
                     #sex_u = sex_change(informathion)
-                    #searh_user= user_search(city_user, sex_u, data_y, status)
+            #searh_user= user_search(city_user, sex_u, data_y, status)
                     #print(searh_user)
                     #foto = get_foto(442362369)
                    #print (foto)
