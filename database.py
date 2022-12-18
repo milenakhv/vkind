@@ -14,13 +14,13 @@ def create_db(conn):
 def check_form(conn, user_id,searh_id):
     with conn.cursor() as cur:
         cur.execute("""
-        SELECT searh_id from client 
-        WHERE id_client=%s;
-            """, (user_id))
-        r=cur.fetchone()
-        if r is None:
-            return False
-        return True
+        SELECT id_search from client 
+        WHERE id_client=%s and id_search=%s;
+            """, (user_id,searh_id,))
+        r = cur.fetchone()
+        if r:
+            return True
+        return False
 
 def add_form(conn, user_id,searh_id):
     with conn.cursor() as cur:
@@ -33,7 +33,7 @@ def add_form(conn, user_id,searh_id):
 
 with psycopg2.connect(database="dipl", user="postgres", password="7870090") as conn:
     with conn.cursor() as cur:
-        print(create_db(conn))
+        create_db(conn)
 
 
 
