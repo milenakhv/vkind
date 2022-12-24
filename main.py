@@ -10,7 +10,6 @@ from database import *
 
 
 translator = {'relation': 'семейное положение',
-              'bdate': 'год рождения',
               'city': 'город'
               }
 
@@ -24,32 +23,25 @@ for event in longpoll.listen():
     if event.type == VkEventType.MESSAGE_NEW and event.to_me:
         msg = event.text.lower()
         user_id = event.user_id
+
         if bot == "relation":
             if msg:
-                write_msg(event.user_id, f"Семейное положение - {msg} ")
+                write_msg(event.user_id, f"Семейное положение - {msg} записано")
                 params["relation"] = msg
             if requaries:
                 bot = "cheking_params"
+                write_msg(user_id, f"В вашем профиле недостаточно параметров для поиска,")
+                write_msg(user_id, f"Введите {translator[requaries[0]]} ,")
             else:
                 bot = "params_ok"
-
-        if bot == "bdate":
-            if msg.isdigit():
-                write_msg(event.user_id, f"Год рождения {msg} записан")
-                params["bdate"] = msg
-            else:
-                write_msg(event.user_id, "Укажи год рождения цифрами")
-            if requaries:
-                bot = "cheking_params"
-            else:
-                bot = "params_ok"
-
         if bot == "city":
             if msg:
                 write_msg(event.user_id, f"Город {msg} записан")
                 params["city"] = msg
             if requaries:
                 bot = "cheking_params"
+                write_msg(user_id, f"В вашем профиле недостаточно параметров для поиска,")
+                write_msg(user_id, f"Введите {translator[requaries[0]]} ,")
             else:
                 bot = "params_ok"
 
@@ -76,21 +68,14 @@ for event in longpoll.listen():
             if msg == "да":
                 write_msg(user_id, "Отлично! Начнем поиск!")
                 informathion = user_info(user_id)
-                if informathion['relation'] == 0:
-                    requaries.append("relation")
-                else:
-                    bot = "cheking_params"
-
-                if "bdate" not in informathion.keys():
-                    requaries.append("bdate")
-                else:
-                    bot = "cheking_params"
-
                 if "city" not in informathion.keys():
                     requaries.append("city")
                 else:
                     bot = "cheking_params"
-
+                if informathion['relation'] == 0:
+                    requaries.append("relation")
+                else:
+                    bot = "cheking_params"
                 if requaries:
                     write_msg(user_id, f"В вашем профиле недостаточно параметров для поиска")
                     write_msg(user_id, f"Введите {translator[requaries[0]]}")
