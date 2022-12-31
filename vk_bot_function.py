@@ -30,43 +30,45 @@ def age_range(bdate, params='from'):
 
 
 def city_id(city):
-     url = "https://api.vk.com/method/database.getCities"
-     params = {
-     "access_token": token_my,
-     "v": PROTOCOL_VERSION,
-     "country_id": 1,
-     "q": city,
-     "need_all": 0,
-     "count": 1
+    url = "https://api.vk.com/method/database.getCities"
+    params = {
+    "access_token": token_my,
+    "v": PROTOCOL_VERSION,
+    "country_id": 1,
+    "q": city,
+    "need_all": 0,
+    "count": 1
         }
-     response = requests.get(url, params=params)
-     result = response.json()
-     for i in result["response"]["items"]:
-        city = i["id"]
-        return city
+    response = requests.get(url, params=params)
+    if response.status_code == 200:
+        result = response.json()
+        for i in result["response"]["items"]:
+            city = i["id"]
+            return city
+    else:
+        return None
 
 
-def relation_check(relation):
-    if 0 <= relation <= 8:
+def relation_check(user_id, relation):
+    if relation == "не женат" or relation == "не замужем":
+        relation = 1
+    elif relation == "есть друг" or relation == "есть подруга":
+        relation = 2
+    elif relation == "помолвлен" or relation == "помолвлена":
+        relation = 3
+    elif relation == "женат" or relation == "замужем":
+        relation = 4
+    elif relation == "все сложно":
+        relation = 5
+    elif relation == "в активном поиске":
+        relation = 6
+    elif relation == "влюблён" or relation == "влюблена":
+        relation = 7
+    elif relation == "в гражданском браке":
+        relation = 8
         return relation
     else:
-        if relation == "не женат" or relation == "не замужем":
-            relation = 1
-        elif relation == "есть друг" or relation == "есть подруга":
-            relation = 2
-        elif relation == "помолвлен" or relation == "помолвлена":
-            relation = 3
-        elif relation == "женат" or relation == "замужем":
-            relation = 4
-        elif relation == "все сложно":
-            relation = 5
-        elif relation == "в активном поиске":
-            relation = 6
-        elif relation == "влюблён" or relation == "влюблена":
-            relation = 7
-        elif relation == "в гражданском браке":
-            relation = 8
-        return relation
+        write_msg(user_id, "Я не понял вашего семейного положения")
 
 
 def user_info(user_id):
@@ -78,9 +80,12 @@ def user_info(user_id):
         "user_ids": user_id
     }
     response = requests.get(url, params=params)
-    result = response.json()
-    for i in result["response"]:
-        return i
+    if response.status_code == 200:
+        result = response.json()
+        for i in result["response"]:
+            return i
+    else:
+        return None
 
 
 def user_search(city_s, sex_s, age_from, age_to, relation_s):
