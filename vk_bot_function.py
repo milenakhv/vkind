@@ -66,9 +66,7 @@ def relation_check(user_id, relation):
         relation = 7
     elif relation == "в гражданском браке":
         relation = 8
-        return relation
-    else:
-        write_msg(user_id, "Я не понял вашего семейного положения")
+    return relation
 
 
 def user_info(user_id):
