@@ -49,7 +49,7 @@ def city_id(city):
         return None
 
 
-def relation_check(user_id, relation):
+def relation_check(relation):
     if relation == "не женат" or relation == "не замужем":
         relation = 1
     elif relation == "есть друг" or relation == "есть подруга":

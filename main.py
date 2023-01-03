@@ -115,7 +115,7 @@ for event in longpoll.listen():
             if informathion['relation'] != 0:
                 relation_element = informathion['relation']
             else:
-                relation_element = relation_check(user_id, params['relation'])
+                relation_element = relation_check(params['relation'])
 
             profile_list = user_aggregation(city_element,
                                             gender_convert(informathion['sex']),
